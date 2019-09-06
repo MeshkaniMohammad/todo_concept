@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:todo_concept/models/card_item_model.dart';
 import 'package:todo_concept/screens/work.dart';
+import 'package:slide_container/slide_container.dart';
+import 'package:slide_container/slide_container_controller.dart';
+import 'package:slide_container/extended_drag_gesture_recognizer.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -36,6 +39,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
+      resizeToAvoidBottomInset: false,
       backgroundColor: currentColor,
       appBar: new AppBar(
         title: new Text(
@@ -109,19 +113,16 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                   scrollDirection: Axis.horizontal,
                   itemBuilder: (context, position) {
                     return GestureDetector(
-                      onTap: () {
+                      onVerticalDragEnd: (d) {
                         print(cardsList[1].cardTitle);
-                        if (position == 1)
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (_) => WorkScreen(
-                                        cardTitle: cardsList[1].cardTitle,
-                                        icon: cardsList[1].icon,
-                                        taskCompletion: cardsList[1].taskCompletion,
-                                        tasksRemaining: cardsList[1].tasksRemaining,
-                                        color: appColors[1],
-                                      )));
+                        if (position == 1) {
+                          CardItemModel cardItemModel = CardItemModel(
+                              cardsList[1].cardTitle,
+                              cardsList[1].icon,
+                              cardsList[1].tasksRemaining,
+                              cardsList[1].taskCompletion);
+                          Navigator.pushNamed(context, '/workScreen', arguments: cardItemModel);
+                        }
                       },
                       child: CustomCard(
                         position: position,
@@ -244,6 +245,30 @@ class CustomCard extends StatelessWidget {
   }
 }
 
+class SlideDownRoute extends PageRouteBuilder {
+  final Widget widget;
+
+  SlideDownRoute({this.widget})
+      : super(
+          pageBuilder: (BuildContext context, Animation<double> animation,
+              Animation<double> secondaryAnimation) {
+            return widget;
+          },
+          transitionsBuilder: (BuildContext context, Animation<double> animation,
+              Animation<double> secondaryAnimation, Widget child) {
+            var begin = Offset(0.0, 1.0);
+            var end = Offset.zero;
+            var curve = Curves.ease;
+
+            var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+
+            return SlideTransition(
+              position: animation.drive(tween),
+              child: child,
+            );
+          },
+        );
+}
 //class HomePage extends StatefulWidget {
 //  @override
 //  _HomePageState createState() => _HomePageState();
