@@ -2,6 +2,10 @@
 
 todo concept
 
+# trying to implement:
+[todo_consept](https://dribbble.com/shots/3812962-iPhone-X-Todo-Concept)
+
+
 ## Getting Started
 
 This project is a starting point for a Flutter application.
