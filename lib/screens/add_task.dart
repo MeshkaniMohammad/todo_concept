@@ -86,8 +86,8 @@ class _AddTaskState extends State<AddTask> {
         tag: "add note",
         child: GestureDetector(
           onTap: () {
-            CardItemModel cardItemModel = CardItemModel(cardsList[1].cardTitle,
-                cardsList[1].icon, cardsList[1].tasksRemaining, cardsList[1].taskCompletion);
+            CardItemModel cardItemModel = CardItemModel(cardsList[1].cardTitle, cardsList[1].icon,
+                cardsList[1].tasksRemaining, cardsList[1].taskCompletion);
             Navigator.pushNamed(context, '/workScreen', arguments: cardItemModel);
           },
           child: Container(
