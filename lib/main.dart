@@ -19,11 +19,11 @@ class MyApp extends StatelessWidget {
           case '/':
             return SlideDownRoute(widget: HomePage());
             break;
-      }
+        }
       },
-        routes: <String, WidgetBuilder>{
-          '/workScreen': (context) => WorkScreen(),
-        },
+      routes: <String, WidgetBuilder>{
+        '/workScreen': (context) => WorkScreen(),
+      },
       home: HomePage(),
     );
   }
