@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:todo_concept/models/card_item_model.dart';
 import 'package:todo_concept/models/work.dart';
-import 'package:todo_concept/screens/work.dart';
 
 class AddTask extends StatefulWidget {
   @override
@@ -88,6 +87,9 @@ class _AddTaskState extends State<AddTask> {
           onTap: () {
             CardItemModel cardItemModel = CardItemModel(cardsList[1].cardTitle, cardsList[1].icon,
                 cardsList[1].tasksRemaining, cardsList[1].taskCompletion);
+            todayWorks.insert(0,
+              Work(_textEditingController.text),
+            );
             Navigator.pushNamed(context, '/workScreen', arguments: cardItemModel);
           },
           child: Container(

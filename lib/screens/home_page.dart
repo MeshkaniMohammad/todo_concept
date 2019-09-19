@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:todo_concept/models/card_item_model.dart';
-import 'package:todo_concept/screens/work.dart';
-import 'package:slide_container/slide_container.dart';
-import 'package:slide_container/slide_container_controller.dart';
-import 'package:slide_container/extended_drag_gesture_recognizer.dart';
+import 'package:todo_concept/models/work.dart';
+import 'package:intl/intl.dart';
+import 'package:todo_concept/widgets/custom_card.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -86,7 +85,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                     style: TextStyle(color: Colors.white),
                   ),
                   Text(
-                    "You have 3 tasks to do today.",
+                    "You have ${cardsList[0].tasksRemaining + todayWorks.length + cardsList[2].tasksRemaining} tasks to do today.",
                     style: TextStyle(
                       color: Colors.white,
                     ),
@@ -101,7 +100,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 64.0, vertical: 16.0),
                 child: Text(
-                  "TODAY : SEPTAMBER 12, 2018",
+                  "TODAY : ${formatDate(DateTime.now())}".toUpperCase(),
                   style: TextStyle(color: Colors.white),
                 ),
               ),
@@ -173,99 +172,4 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   }
 }
 
-class CustomCard extends StatelessWidget {
-  final int position;
-  final List<CardItemModel> cardsList;
-  final List<Color> appColors;
-
-  const CustomCard({Key key, this.position, this.cardsList, this.appColors}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Card(
-        child: Container(
-          width: 250.0,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: <Widget>[
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    Icon(
-                      cardsList[position].icon,
-                      color: appColors[position],
-                    ),
-                    Icon(
-                      Icons.more_vert,
-                      color: Colors.grey,
-                    ),
-                  ],
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
-                      child: Text(
-                        "${cardsList[position].tasksRemaining} Tasks",
-                        style: TextStyle(color: Colors.grey),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
-                      child: Text(
-                        "${cardsList[position].cardTitle}",
-                        style: TextStyle(fontSize: 28.0),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: LinearProgressIndicator(
-                        value: cardsList[position].taskCompletion,
-                        backgroundColor: Colors.grey.shade200,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
-      ),
-    );
-  }
-}
-
-class SlideDownRoute extends PageRouteBuilder {
-  final Widget widget;
-
-  SlideDownRoute({this.widget})
-      : super(
-          pageBuilder: (BuildContext context, Animation<double> animation,
-              Animation<double> secondaryAnimation) {
-            return widget;
-          },
-          transitionsBuilder: (BuildContext context, Animation<double> animation,
-              Animation<double> secondaryAnimation, Widget child) {
-            var begin = Offset(0.0, 1.0);
-            var end = Offset.zero;
-            var curve = Curves.ease;
-
-            var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
-
-            return SlideTransition(
-              position: animation.drive(tween),
-              child: child,
-            );
-          },
-        );
-}
+String formatDate(DateTime date) => new DateFormat("MMMM d, y").format(date);

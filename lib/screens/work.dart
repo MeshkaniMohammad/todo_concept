@@ -2,9 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:todo_concept/models/card_item_model.dart';
 import 'package:todo_concept/models/work.dart';
 import 'package:todo_concept/screens/add_task.dart';
-import 'package:todo_concept/screens/home_page.dart';
+import 'package:todo_concept/widgets/custom_appbar.dart';
 
 class WorkScreen extends StatefulWidget {
+  final CardItemModel cardItemModel;
+
+  const WorkScreen({Key key, this.cardItemModel}) : super(key: key);
+
   @override
   _WorkScreenState createState() => _WorkScreenState();
 }
@@ -17,9 +21,7 @@ class _WorkScreenState extends State<WorkScreen> {
 
   void addWork() {
     int index = 0;
-    todayWorks.add(
-      Work("Meet Clients"),
-    );
+
     _todayListKey.currentState.insertItem(index, duration: Duration(milliseconds: 500));
   }
 
@@ -29,15 +31,15 @@ class _WorkScreenState extends State<WorkScreen> {
       index,
       (BuildContext context, Animation<double> animation) {
         return FadeTransition(
-          opacity: CurvedAnimation(parent: animation, curve: Interval(0.5, 1.0)),
+          opacity: CurvedAnimation(parent: animation, curve: Interval(0.0, 1.0)),
           child: SizeTransition(
             sizeFactor: CurvedAnimation(parent: animation, curve: Interval(0.0, 1.0)),
             axisAlignment: 0.0,
-            child: _buildItem(today),
+            child: _buildItemForRemove(today),
           ),
         );
       },
-      duration: Duration(milliseconds: 600),
+      duration: Duration(milliseconds: 1000),
     );
   }
 
@@ -55,6 +57,37 @@ class _WorkScreenState extends State<WorkScreen> {
               }
             }),
         Text(todayWork.work),
+      ],
+    );
+  }
+
+  Widget _buildItemForRemove(Work todayWork, [int index]) {
+    return Row(
+      children: <Widget>[
+        Checkbox(
+            value: false,
+            onChanged: (val) {
+              if (val) {
+                setState(() {
+                  showDeleteIcon = true;
+                });
+                deleteWork(index);
+              }
+            }),
+        Stack(
+          children: <Widget>[
+            Text(
+              todayWork.work,
+            ),
+            if (showDeleteIcon)
+              Container(
+                margin: EdgeInsets.only(top: 7),
+                height: 2,
+                width: 100,
+                color: Colors.grey,
+              )
+          ],
+        ),
         Spacer(),
         if (showDeleteIcon) Icon(Icons.delete)
       ],
@@ -86,9 +119,7 @@ class _WorkScreenState extends State<WorkScreen> {
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
                   child: Text(
-                    this._cardItemModel.tasksRemaining == null
-                        ? "12 Tasks"
-                        : "${this._cardItemModel.tasksRemaining} Tasks",
+                    "${todayWorks.length} Tasks",
                     style: TextStyle(color: Colors.grey),
                   ),
                 ),
@@ -103,10 +134,9 @@ class _WorkScreenState extends State<WorkScreen> {
                 ),
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 8),
+                  //currently only supports 10 tasks
                   child: LinearProgressIndicator(
-                    value: this._cardItemModel.taskCompletion == null
-                        ? 0.6
-                        : this._cardItemModel.taskCompletion,
+                    value: todayWorks.length / 10.0,
                     backgroundColor: Colors.grey.shade200,
                   ),
                 ),
@@ -169,44 +199,4 @@ class _WorkScreenState extends State<WorkScreen> {
       ),
     );
   }
-}
-
-class WorkAppBar extends StatelessWidget implements PreferredSizeWidget {
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onVerticalDragEnd: (d) {
-        Navigator.pushNamed(context, '/');
-      },
-      child: AppBar(
-        backgroundColor: Colors.white,
-        actions: <Widget>[
-          Padding(
-            padding: const EdgeInsets.only(top: 15, left: 10),
-            child: IconButton(
-              icon: Icon(
-                Icons.arrow_back,
-                color: Colors.grey,
-              ),
-              onPressed: () => Navigator.pushNamed(context, '/'),
-            ),
-          ),
-          Spacer(),
-          Padding(
-            padding: const EdgeInsets.only(top: 15, right: 20),
-            child: Image.asset(
-              'assets/menu.png',
-              width: 15,
-              height: 30,
-              color: Colors.grey,
-            ),
-          )
-        ],
-        elevation: 0.0,
-      ),
-    );
-  }
-
-  @override
-  Size get preferredSize => Size.fromHeight(56.0);
 }
